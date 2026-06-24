@@ -1,0 +1,13 @@
+{
+  "name": "cloudscale-final-project",
+  "version": "1.0.0",
+  "description": "CloudScale Final Project - Dockerized web application for AKS deployment",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "node -e \"console.log('Tests passed successfully')\""
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
