@@ -1,183 +1,92 @@
 # CloudScale Final Project
 
+**Prepared by:**
+* Sabreen Ashraf Alzwi - Student ID: [4836]
+* Retaj Abraheem ben fadhl - Student ID: [4804]
+* Rahaf Gadri Mohammed - Student ID: [4872]
+
+**Instructor:** M.Sc. Abdelhakim Rashid  
+**Academic Year:** 2025-2026
+
+---
+
 ## Project Description
 
-This project is a Cloud Computing and DevOps Engineering final project.
+CloudScale is a growing startup that aims to deploy a scalable, containerized web application on Microsoft Azure without the need to manually manage virtual machines.
 
-The goal of the project is to deploy a containerized web application to Microsoft Azure using DevOps best practices. The application is built using Node.js and Express, containerized with Docker, pushed to Azure Container Registry (ACR), deployed to Azure Kubernetes Service (AKS), and automated using GitHub Actions CI/CD with a manual approval gate before production deployment.
+This project was implemented using Kubernetes, Docker, Terraform, Azure Kubernetes Service (AKS), Azure Container Registry (ACR), and GitHub Actions to create a fully automated DevOps pipeline.
 
-## Team Members
+The implemented solution includes:
+* A custom Node.js-based web application that displays a personalized message including the names of Sabreen, Retaj, and Rahaf, along with a health check endpoint (`/health`) for monitoring purposes.
+* A Docker image built from the application and pushed to Azure Container Registry (ACR) for secure and efficient storage.
+* Terraform configuration files that provision the required Azure infrastructure, including a Resource Group, Azure Container Registry, and an Azure Kubernetes Service (AKS) cluster.
+* Kubernetes deployment and service manifests that define the application deployment with multiple replicas, enable load balancing, and ensure high availability using a LoadBalancer service.
+* Health monitoring using Kubernetes readiness and liveness probes configured on the `/health` endpoint to ensure application reliability and automatic recovery.
+* A GitHub Actions CI/CD workflow that automates the process of building, testing, and pushing the Docker image, and deploying the application to AKS upon changes to the main branch.
+* A manual approval gate configured using the GitHub production environment to ensure controlled deployment to production.
+* Secure Azure authentication using a Service Principal stored in GitHub Secrets to enable seamless and protected access to Azure resources.
 
-* Sabreen
-* Rahaf
-* Retaj
+This solution demonstrates a complete DevOps lifecycle, from code development to automated deployment on a managed Kubernetes platform, ensuring scalability, reliability, and minimal operational overhead.
 
-## Technologies Used
+---
 
-* Git and GitHub
-* Node.js and Express
-* Docker
-* Azure Container Registry (ACR)
-* Azure Kubernetes Service (AKS)
-* Terraform
-* Kubernetes
-* GitHub Actions
+## Setup Instructions
 
-## Project Architecture
+### 1. Docker Setup
+1. Build the Docker image:
+   docker build -t cloudscale-app .
+2. Run the Docker container locally:
+   docker run -p 3000:3000 cloudscale-app.
+3. Verify the application is running by visiting:
+   http://localhost:3000
+4. Verify the health endpoint:
+  http://localhost:3000/health
 
-The project follows this DevOps workflow:
+### 2. Terraform Setup
+1. Initialize Terraform:
+   terraform init
+2. Review the execution plan:
+   terraform plan
+3. Create Azure resources:
+   terraform apply  
+   ##This creates: Azure Resource Group, Azure Container Registry (ACR), Azure Kubernetes Service (AKS)
+  
+### 3. Kubernetes Setup
+1. Deploy the application:
+   kubectl apply -f k8s/
+2. Check running pods:
+   kubectl get pods
+3. Check services:
+   kubectl get svc
+4. Check cluster nodes:
+   kubectl get nodes
+### Architecture 
+   
+## GitHub Actions Workflow Explanation
+The project uses GitHub Actions to automate the Continuous Integration and Continuous Deployment (CI/CD) process.
 
-Code → GitHub → GitHub Actions → Docker Image → Azure Container Registry → Azure Kubernetes Service → LoadBalancer → Browser
+Whenever code is pushed to the main branch, GitHub Actions automatically starts the workflow. The workflow builds the Docker image, authenticates with Microsoft Azure using GitHub Secrets, pushes the Docker image to Azure Container Registry (ACR), and waits for manual approval before deploying the latest image to Azure Kubernetes Service (AKS).
 
-The developer pushes code to GitHub. GitHub Actions builds and tests the Docker image, pushes the image to Azure Container Registry, then deploys the updated image to Azure Kubernetes Service after manual approval.
+The manual approval gate ensures that deployments to the production environment only occur after explicit approval, providing an additional layer of safety and control. This automated workflow reduces manual effort, improves deployment consistency, and ensures reliable application delivery.
 
-## Main Project Components
 
-* `app.js`: Node.js Express web application.
-* `Dockerfile`: Builds the Docker image for the application.
-* `package.json`: Contains application dependencies and scripts.
-* `terraform/`: Contains Terraform files used to create Azure infrastructure.
-* `k8s/deployment.yaml`: Kubernetes Deployment file with 3 replicas and health probes.
-* `k8s/service.yaml`: Kubernetes LoadBalancer Service file.
-* `.github/workflows/ci-cd.yml`: GitHub Actions CI/CD workflow.
-* `.gitignore`: Prevents unnecessary or sensitive files from being pushed to GitHub.
 
-## Application Features
+## Step-by-Step Solution
 
-The application includes:
+Step 1 – Develop the Web Application: A Node.js web application was created with a custom homepage displaying the names of the project members. A /health endpoint was also implemented for Kubernetes health checks.
 
-* A custom homepage message with the team members’ names.
-* A `/health` endpoint used for Kubernetes readiness and liveness probes.
-* Display of the running Pod name to show that the application is running inside Kubernetes.
+Step 2 – Containerize the Application: A Dockerfile was created to package the application into a Docker image. The image was successfully built and tested locally.
 
-## Docker Setup
+Step 3 – Provision Azure Infrastructure: Terraform was used to provision the Azure Resource Group, Azure Container Registry (ACR), and Azure Kubernetes Service (AKS) cluster automatically.
 
-Build the Docker image locally:
+Step 4 – Configure Kubernetes: Kubernetes Deployment and Service manifests were created. The deployment runs three replicas of the application, while the LoadBalancer service exposes the application externally.
 
-```bash
-docker build -t cloudscale-app:v1.0.0 .
-```
+Step 5 – Configure Health Probes: Readiness and Liveness probes were configured to monitor the /health endpoint, allowing Kubernetes to detect unhealthy containers and restart them automatically when necessary.
 
-Tag the image for Azure Container Registry:
+Step 6 – Configure GitHub Secrets: Azure credentials were appropriately configured to enable secure workflows.
 
-```bash
-docker tag cloudscale-app:v1.0.0 cloudscalesrracr2026.azurecr.io/cloudscale-app:v1.0.0
-```
+Step 8 – Configure Manual Approval Gate: A GitHub Environment with required reviewers was configured to require manual approval before production deployment.
 
-Push the image to ACR:
+Step 9 – Deploy the Application: After approval, GitHub Actions deployed the latest Docker image to Azure Kubernetes Service, where Kubernetes created three running replicas of the application.
 
-```bash
-docker push cloudscalesrracr2026.azurecr.io/cloudscale-app:v1.0.0
-```
-
-## Terraform Setup
-
-Navigate to the Terraform folder:
-
-```bash
-cd terraform
-```
-
-Initialize Terraform:
-
-```bash
-terraform init
-```
-
-Preview the infrastructure plan:
-
-```bash
-terraform plan
-```
-
-Apply the Terraform configuration:
-
-```bash
-terraform apply
-```
-
-Terraform creates the following Azure resources:
-
-* Azure Resource Group
-* Azure Container Registry with Basic SKU
-* Azure Kubernetes Service cluster
-* AKS and ACR integration for automatic image pull
-* Required tags for the project
-
-## Kubernetes Deployment
-
-Get AKS credentials:
-
-```bash
-az aks get-credentials --resource-group sabreen-rahaf-retaj-final-rg --name cloudscale-srr-aks --overwrite-existing
-```
-
-Apply the Kubernetes Deployment:
-
-```bash
-kubectl apply -f k8s/deployment.yaml
-```
-
-Apply the Kubernetes Service:
-
-```bash
-kubectl apply -f k8s/service.yaml
-```
-
-Check the deployment:
-
-```bash
-kubectl get deployments
-kubectl get pods
-kubectl get service
-```
-
-The application is exposed using an Azure LoadBalancer public IP.
-
-## GitHub Actions CI/CD
-
-The GitHub Actions workflow automates the CI/CD process.
-
-The workflow performs the following steps:
-
-1. Builds and tests the Docker image.
-2. Logs in to Azure using GitHub Secrets.
-3. Logs in to Azure Container Registry.
-4. Builds and pushes the Docker image to ACR.
-5. Gets AKS credentials.
-6. Updates the Kubernetes deployment image.
-7. Waits for the Kubernetes rollout to complete.
-
-The deployment job uses a `production` environment with a manual approval gate before deployment.
-
-## GitHub Secrets Used
-
-The workflow uses the following GitHub Secrets:
-
-* `AZURE_CREDENTIALS`
-* `ACR_NAME`
-* `ACR_LOGIN_SERVER`
-* `RESOURCE_GROUP`
-* `AKS_CLUSTER_NAME`
-* `IMAGE_NAME`
-
-These secrets allow GitHub Actions to authenticate securely with Azure, ACR, and AKS without exposing sensitive credentials in the repository.
-
-## Important Notes
-
-ACR Tasks were not permitted in the Azure for Students subscription, so the Docker image was built locally and pushed to Azure Container Registry using Docker commands.
-
-The required node size `Standard_B2s` was not allowed in the selected Azure region and student subscription, so the AKS node size was changed to `Standard_B2als_v2`, which was available in the subscription.
-
-## Repository Link
-
-https://github.com/sabreennajeeb-commits/cloudscale-final-project
-
-## Cleanup
-
-After completing the project and taking all required screenshots, Azure resources should be deleted to avoid unnecessary costs:
-
-```bash
-cd terraform
-terraform destroy
-```
+Step 10 – Verify Deployment: The deployment was verified by checking the Docker image in ACR, Terraform deployment success, Kubernetes nodes, running pods, GitHub Actions workflow, manual approval gate, Azure Portal resources, and the application running successfully in the browser.
