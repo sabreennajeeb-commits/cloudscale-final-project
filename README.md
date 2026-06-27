@@ -60,7 +60,7 @@ This solution demonstrates a complete DevOps lifecycle, from code development to
    kubectl get svc
 4. Check cluster nodes:
    kubectl get nodes
-### Architecture 
+
    
 ## GitHub Actions Workflow Explanation
 The project uses GitHub Actions to automate the Continuous Integration and Continuous Deployment (CI/CD) process.
